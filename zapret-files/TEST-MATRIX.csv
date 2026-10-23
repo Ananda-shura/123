@@ -1,0 +1,4 @@
+mode,original_strategy,round,youtube_open,video_1080p_10min,seek,buffer_events,protocol_h2_h3,steam_store,steam_library,download_mbps,cs2_server_alias,ping_ms,jitter_ms,loss_pct,notes
+off,,1,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,,UNRUN,UNRUN,UNRUN,
+original,,1,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,,UNRUN,UNRUN,UNRUN,
+optimized,,1,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,UNRUN,,UNRUN,UNRUN,UNRUN,

@@ -1,0 +1,77 @@
+﻿$ErrorActionPreference = 'Stop'
+$root = $env:ZAPRET_READY_ROOT
+$mutex = $null
+$locked = $false
+try {
+    $m = Get-Content -LiteralPath (Join-Path $root 'ready-messages.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    $q = [char]34
+    $hostlist = Join-Path $root 'lists\list-youtube-optimized.txt'
+    $bin = Join-Path $root 'bin'
+    $exe = Join-Path $bin 'winws.exe'
+    $pattern = Join-Path $bin 'tls_clienthello_www_google_com.bin'
+    $quic = Join-Path $bin 'quic_initial_www_google_com.bin'
+    $nativeArgs = @('--wf-tcp=443', '--wf-udp=443', '--filter-udp=443',
+        ('--hostlist=' + $q + $hostlist + $q), '--dpi-desync=fake', '--dpi-desync-repeats=6',
+        ('--dpi-desync-fake-quic=' + $q + $quic + $q), '--new', '--filter-tcp=443',
+        ('--hostlist=' + $q + $hostlist + $q), '--ip-id=zero', '--dpi-desync=multisplit',
+        '--dpi-desync-split-seqovl=681', '--dpi-desync-split-pos=1',
+        ('--dpi-desync-split-seqovl-pattern=' + $q + $pattern + $q))
+    if ($env:ZAPRET_READY_CHECK -eq 'PrintArguments') {
+        [pscustomobject]@{ Executable = $exe; Arguments = $nativeArgs } | ConvertTo-Json -Depth 4
+        exit 0
+    }
+    $names = @(Get-Content -LiteralPath $hostlist -Encoding UTF8 | ForEach-Object { $_.Trim() } |
+        Where-Object { $_ -and -not $_.StartsWith('#') })
+    if ($names.Count -eq 0) { throw $m.EmptyList }
+    foreach ($name in $names) {
+        if ($name -notmatch '^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$' -or $name.Contains('..')) { throw $m.InvalidList }
+    }
+    $manifest = Get-Content -LiteralPath (Join-Path $root 'ORIGINAL-SHA256.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    $entries = @($manifest.PSObject.Properties | Where-Object { $_.Name -like 'bin/*' })
+    if ($entries.Count -ne 27) { throw $m.BadManifest }
+    foreach ($entry in $entries) {
+        $file = Join-Path $root $entry.Name
+        if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw ($m.MissingFile + $entry.Name) }
+        if ((Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash -ne $entry.Value) {
+            throw ($m.BadHash + $entry.Name)
+        }
+    }
+    if ($env:ZAPRET_READY_CHECK -eq 'FilesOnly') { Write-Output 'FILES_OK'; exit 0 }
+    if ($env:OS -ne 'Windows_NT') { throw 'This launcher requires Windows 11 x64.' }
+    if ($env:PROCESSOR_ARCHITECTURE -ne 'AMD64' -and $env:PROCESSOR_ARCHITEW6432 -ne 'AMD64') { throw $m.Architecture }
+    $id = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($id)
+    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Host $m.Elevation
+        Start-Process -FilePath $env:ZAPRET_READY_START -Verb RunAs
+        exit 0
+    }
+    $mutex = New-Object System.Threading.Mutex($false, 'Global\ZapretYoutubeOptimized1104')
+    try { $locked = $mutex.WaitOne(0) }
+    catch [System.Threading.AbandonedMutexException] { $locked = $true }
+    if (-not $locked) { throw $m.Duplicate }
+    $running = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -in @('winws.exe','winws2.exe','goodbyedpi.exe') })
+    if ($running.Count -gt 0) { throw $m.OtherProcess }
+    $services = @(Get-Service -Name zapret,GoodbyeDPI,discordfix_zapret,winws1,winws2 -ErrorAction SilentlyContinue |
+        Where-Object { $_.Status -ne 'Stopped' })
+    if ($services.Count -gt 0) { throw $m.OtherService }
+    Write-Host $m.Starting -ForegroundColor Green
+    Write-Host $m.Stop
+    Write-Host $m.Scope
+    Push-Location -LiteralPath $bin
+    try { & $exe @nativeArgs; $code = $LASTEXITCODE }
+    finally { Pop-Location }
+    if ($code -ne 0) { throw ($m.ExeError + $code) }
+} catch {
+    Write-Host ('ERROR: ' + $_.Exception.Message) -ForegroundColor Red
+    $errorText = $_.Exception.Message
+    try {
+        $logs = Join-Path $root 'logs'
+        $null = New-Item -ItemType Directory -Path $logs -Force
+        $errorText | Set-Content -LiteralPath (Join-Path $logs 'last-error.txt') -Encoding UTF8
+    } catch { }
+    exit 1
+} finally {
+    if ($locked) { $mutex.ReleaseMutex() }
+    if ($null -ne $mutex) { $mutex.Dispose() }
+}

@@ -1,0 +1,45 @@
+{
+  "retrieval": "Official GitHub source snapshots downloaded over verified HTTPS. Tags resolved with git ls-remote; hashes here are locally computed integrity records, not separately signed upstream checksums. No source or binary was executed.",
+  "binary_version_evidence": {
+    "cygwin1.dll": "embedded /cygdrive/d/a/scallywag/cygwin/cygwin-3.4.10-1.x86_64/src/newlib-cygwin/...",
+    "WinDivert64.sys": "embedded C:\\WinDivert-2.2.2\\install\\MSVC\\amd64\\WinDivert64.pdb"
+  },
+  "sources": [
+    {
+      "archive": "cygwin-3.4.10-source.tar.gz",
+      "project": "Cygwin",
+      "version": "3.4.10",
+      "url": "https://github.com/cygwin/cygwin/archive/refs/tags/cygwin-3.4.10.tar.gz",
+      "tag": "cygwin-3.4.10",
+      "tag_object": "08527d3a014d003da439fdf7d1910a36aaf2a431",
+      "commit": "89a1e4a573d40b233011402f42630b970ff71291",
+      "licenses": [
+        "winsup/CYGWIN_LICENSE",
+        "winsup/COPYING.LIB",
+        "winsup/COPYING",
+        "COPYING.NEWLIB",
+        "COPYING.LIBGLOSS"
+      ],
+      "source_scope": "Complete upstream repository tag including newlib, winsup, configure and build scripts. Exact Cygwin distribution package 3.4.10-1 cygport/source package was not retrieved; original build recipe and binary reproducibility not independently verified.",
+      "sha256": "fb20c5554320fff4f79ee850fc9579b1896db8cf017a11e4746884d2e46f50d7",
+      "size_bytes": 12005706,
+      "archive_entries": 6807
+    },
+    {
+      "archive": "WinDivert-2.2.2-source.tar.gz",
+      "project": "WinDivert",
+      "version": "2.2.2",
+      "url": "https://github.com/basil00/WinDivert/archive/refs/tags/v2.2.2.tar.gz",
+      "tag": "v2.2.2",
+      "tag_object": "1789526ecfb9ff5397c94f9f54c1a3dc2fb60440",
+      "commit": "1789526ecfb9ff5397c94f9f54c1a3dc2fb60440",
+      "licenses": [
+        "LICENSE"
+      ],
+      "source_scope": "Complete upstream repository tag including sys sources and MSVC/WDK/MinGW build scripts. Original signing keys are not included and original signed binaries were not reproduced.",
+      "sha256": "300c1b14e08652e0f8647bf06e9b212f924af76cb2459bd0f88da481c9b08336",
+      "size_bytes": 164606,
+      "archive_entries": 63
+    }
+  ]
+}

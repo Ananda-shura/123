@@ -1,0 +1,103 @@
+﻿$ErrorActionPreference = 'Stop'
+$root = $env:ZAPRET_DIAG_ROOT
+$report = [ordered]@{ Version = 1; TimeUtc = [datetime]::UtcNow.ToString('o'); Note = 'No configuration changes. No browser history, account name or credentials collected. HTTPS probes do not test video playback.' }
+function Probe($url,$extra,$body) {
+    $p = New-Object System.Diagnostics.Process
+    $i = New-Object System.Diagnostics.ProcessStartInfo
+    $i.FileName = Join-Path $env:SystemRoot 'System32\curl.exe'
+    $q = [char]34
+    $base = '--disable --silent --show-error --location --max-redirs 3 --max-time 8 --connect-timeout 4 --proto =https --proto-redir =https '
+    if ($body) { $base += '--fail ' }
+    if (-not $body) { $base += '--output NUL --write-out '+$q+'http=%{http_code} dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} total=%{time_total} bytes=%{size_download} remote=%{remote_ip}'+$q+' ' }
+    $i.Arguments = $base+$extra+' '+$q+$url+$q
+    $i.UseShellExecute = $false
+    $i.CreateNoWindow = $true
+    $i.RedirectStandardOutput = $true
+    $i.RedirectStandardError = $true
+    $p.StartInfo = $i
+    try {
+        $null = $p.Start()
+        $stdout = $p.StandardOutput.ReadToEndAsync()
+        $stderr = $p.StandardError.ReadToEndAsync()
+        if (-not $p.WaitForExit(12000)) { $p.Kill(); $p.WaitForExit() }
+        $e = $stderr.GetAwaiter().GetResult()
+        $e = $e -replace '(https?://)[^/@\s]+@','$1[redacted]@'
+        if ($env:USERPROFILE) { $e = $e.Replace($env:USERPROFILE,'[profile]') }
+        [pscustomobject]@{ ExitCode = $p.ExitCode; Output = $stdout.GetAwaiter().GetResult(); Error = $e }
+    } catch { [pscustomobject]@{ ExitCode = -1; Output = ''; Error = $_.CategoryInfo.Reason } }
+    finally { $p.Dispose() }
+}
+function Capture($action) {
+    try { & $action } catch { [pscustomobject]@{ Error = $_.CategoryInfo.Reason; ErrorId = $_.FullyQualifiedErrorId } }
+}
+$report.System = [pscustomobject]@{ OS = [Environment]::OSVersion.VersionString; Architecture = $env:PROCESSOR_ARCHITECTURE; PowerShell = $PSVersionTable.PSVersion.ToString() }
+$report.Processes = @(Capture {
+    Get-CimInstance Win32_Process | Where-Object { $_.Name -in @('winws.exe','winws2.exe','goodbyedpi.exe') } |
+        ForEach-Object { [pscustomobject]@{ Name = $_.Name; Pid = $_.ProcessId; ArgumentsReadable = [bool]$_.CommandLine; UsesYoutubeList = if ($_.CommandLine) { [bool]($_.CommandLine -match 'list-youtube-optimized') } else { $null }; Tcp443 = if ($_.CommandLine) { [bool]($_.CommandLine -match 'wf-tcp=443') } else { $null }; Udp443 = if ($_.CommandLine) { [bool]($_.CommandLine -match 'wf-udp=443') } else { $null } } }
+})
+$report.Services = @(Capture { Get-Service -Name zapret,GoodbyeDPI,BFE,AdguardSvc,HappService -ErrorAction SilentlyContinue | Select-Object Name,Status })
+$report.ProxyFlags = Capture {
+    $p = Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings'
+    [pscustomobject]@{ UserProxyEnabled = ($p.ProxyEnable -eq 1); PacPresent = [bool]$p.AutoConfigURL;
+        EnvironmentProxyPresent = [bool]($env:HTTP_PROXY -or $env:HTTPS_PROXY -or $env:ALL_PROXY) }
+}
+$report.HostsYoutubeEntryCount = Capture {
+    @(Get-Content -LiteralPath (Join-Path $env:SystemRoot 'System32\drivers\etc\hosts') |
+        Where-Object { $_ -notmatch '^\s*#' -and $_ -match 'youtube|googlevideo|ytimg' }).Count
+}
+$report.LocalFiles = Capture {
+    $h = Join-Path $root 'lists\list-youtube-optimized.txt'
+    $b = Join-Path $root 'bin\winws.exe'
+    [pscustomobject]@{ InReadyFolder = (Test-Path -LiteralPath $h); HostCount = @(if (Test-Path -LiteralPath $h) { Get-Content -LiteralPath $h | Where-Object { $_ -and $_ -notmatch '^\s*#' } }).Count;
+        WinwsHash = if (Test-Path -LiteralPath $b) { (Get-FileHash -LiteralPath $b -Algorithm SHA256).Hash } else { 'not found' } }
+}
+$report.Dns = @(foreach ($domain in @('www.youtube.com','i.ytimg.com','store.steampowered.com')) {
+    Write-Host ('DNS: '+$domain)
+    [pscustomobject]@{ Domain = $domain; Results = @(Capture { Resolve-DnsName -Name $domain -DnsOnly -QuickTimeout -ErrorAction Stop |
+        Where-Object { $_.Type -in @('A','AAAA') } | Select-Object Type,IPAddress }) }
+})
+if (-not (Test-Path -LiteralPath (Join-Path $env:SystemRoot 'System32\curl.exe'))) { throw 'Windows curl.exe not found.' }
+$report.TcpChecks = @()
+$tests = @(
+    @('youtube-ipv4','https://www.youtube.com/','-4'),
+    @('youtube-ipv6','https://www.youtube.com/','-6'),
+    @('youtube-tls12','https://www.youtube.com/','-4 --tls-max 1.2'),
+    @('youtube-image','https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg','-4'),
+    @('steam-control','https://store.steampowered.com/','-4'),
+    @('google-control','https://www.google.com/','-4')
+)
+foreach ($test in $tests) {
+    Write-Host ('HTTPS: '+$test[0])
+    $r = Probe $test[1] $test[2] $false
+    $report.TcpChecks += [pscustomobject]@{ Test = $test[0]; Url = $test[1]; ExitCode = $r.ExitCode; Metrics = $r.Output; Error = $r.Error }
+    Write-Host ('  curl='+$r.ExitCode+' '+$r.Output)
+}
+Write-Host 'DNS-over-HTTPS comparison (query only; system DNS unchanged)'
+$answers = @()
+$report.Doh = @()
+foreach ($provider in @(@('Google','https://dns.google/resolve?name=www.youtube.com&type=A','-4'),@('Cloudflare','https://cloudflare-dns.com/dns-query?name=www.youtube.com&type=A','-4 -H Accept:application/dns-json'))) {
+    $doh = Probe $provider[1] $provider[2] $true
+    $found = @()
+    $parsed = $false
+    $dnsStatus = $null
+    if ($doh.ExitCode -eq 0) {
+        try { $data = $doh.Output | ConvertFrom-Json; $dnsStatus = $data.Status; $parsed = $true; $found = @($data.Answer | Where-Object { $_.type -eq 1 } | Select-Object -ExpandProperty data) } catch { }
+    }
+    $report.Doh += [pscustomobject]@{ Provider = $provider[0]; ExitCode = $doh.ExitCode; JsonParsed = $parsed; DnsStatus = $dnsStatus; Answers = $found; Error = $doh.Error }
+    if ($answers.Count -eq 0) { $answers = $found }
+}
+if ($answers.Count -gt 0) {
+    $ip = [System.Net.IPAddress]::None
+    if ([System.Net.IPAddress]::TryParse([string]$answers[0],[ref]$ip) -and $ip.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork) {
+        Write-Host 'HTTPS: youtube with DoH answer (temporary curl-only resolve)'
+        $r = Probe 'https://www.youtube.com/' ('-4 --resolve www.youtube.com:443:'+$ip.ToString()) $false
+        $report.TcpChecks += [pscustomobject]@{ Test = 'youtube-doh-resolve'; Url = 'https://www.youtube.com/'; ExitCode = $r.ExitCode; Metrics = $r.Output; Error = $r.Error }
+    }
+}
+$json = $report | ConvertTo-Json -Depth 9
+$out = Join-Path $root ('YOUTUBE-DIAGNOSTIC-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,6)+'.txt')
+$json | Set-Content -LiteralPath $out -Encoding UTF8
+Write-Host ''
+Write-Host 'DONE: YOUTUBE-DIAGNOSTIC-....txt was saved next to DIAGNOSE.cmd.' -ForegroundColor Green
+Write-Host 'Run while START.cmd stays open. Then send this report for diagnosis.'
+if ($env:ZAPRET_DIAG_CHECK -ne 'Test') { Start-Process -FilePath (Join-Path $env:SystemRoot 'System32\notepad.exe') -ArgumentList (([char]34)+$out+([char]34)) }

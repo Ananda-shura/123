@@ -31,3 +31,9 @@
 - [Таблица исходных стратегий](zapret-files/STRATEGIES.md)
 - [Изменения прежнего дополнения](zapret-files/CHANGELOG.md) и [diff](zapret-files/changes.diff)
 - [Происхождение оригинального релиза](zapret-files/PROVENANCE.md)
+
+## Если YouTube не открывается
+
+[Скачать небольшую диагностику](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/youtube-diagnostic.zip). Оставьте START.cmd работающим, распакуйте диагностику в любую новую папку и нажмите DIAGNOSE.cmd. Через 1–2 минуты откроется YOUTUBE-DIAGNOSTIC-....txt с DNS/HTTPS-результатами.
+
+Диагностика не меняет настройки Windows, DNS и службы. Ответы DoH используются только для одного временного curl-запроса. Результаты нужны, чтобы отделить DNS, TLS и браузерный отказ; они не доказывают воспроизведение видео. [Исходник и проверки](diagnostic/VALIDATION.md).

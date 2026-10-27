@@ -1,0 +1,11 @@
+{
+  "upstream": "https://github.com/Flowseal/zapret-discord-youtube",
+  "release": "https://github.com/Flowseal/zapret-discord-youtube/releases/tag/1.10.4",
+  "tag_commit": "176f56dc3f11ce5915c26abcdde903f93d835b64",
+  "official_zip_sha256": "291af673bd0238506f9548e0e94ca0abf244000f4c9a06960544fb01c5f97b34",
+  "original_files": 59,
+  "modified_original_files": 24,
+  "unchanged_bin_files": 27,
+  "binary_modifications": false,
+  "note": "Unofficial reviewed modification of the exact official 1.10.4 release. Not endorsed by upstream."
+}

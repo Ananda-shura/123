@@ -1,0 +1,98 @@
+{
+  "general (ALT).bat": {
+    "original_sha256": "233512a3275cd934f27b20dc33cb058794f4fcc2c5ef58694651c84b07d3b538",
+    "modified_sha256": "83ab3346abcd53662bfa82d87c8ca70e7370c86a1e521eede49caae076fd60f7"
+  },
+  "general (ALT10).bat": {
+    "original_sha256": "00c31ee7bc3f41a79209cbd0e9e60a04033b8b6844e1e6b8157faf2a1da0cb5f",
+    "modified_sha256": "3a940a0972842c0a5e5a19a94b5e4d785f417522b2704127eda68622eb7a8135"
+  },
+  "general (ALT11).bat": {
+    "original_sha256": "6003f63ed86e6b5d4b6a3f3a6d38d710af6a7d515325dfc7ad0ce77e85961b0d",
+    "modified_sha256": "993eadbb4e4ed4ecaee9a3cc6556dd98d1271e0b135f1e93ada5ada00d616152"
+  },
+  "general (ALT12).bat": {
+    "original_sha256": "e6f24c3048bca3ad4dbf408afe23c2e1a2ef3dc6ff20ecc4c37df64022101ead",
+    "modified_sha256": "b507a63457c148f877d63d4030e364deb25fb3073b0760a577ff4b8988ee2a48"
+  },
+  "general (ALT13).bat": {
+    "original_sha256": "0ef7279f222ced580f002c4073cc431307a368d6a70016489fc09e7a1741b0f8",
+    "modified_sha256": "dd9d6f66a57ce5a263c289eb5c6c869dd42efe56b4b820e06efc380205838f9e"
+  },
+  "general (ALT2).bat": {
+    "original_sha256": "f928a447fd312866c02e3a06519537c892424c9133a6ec91ee741664ff17595e",
+    "modified_sha256": "249df22a94a2ffff4fb2d2dbfdc49493ab44aa1e762cde889d7dd0efedbc183a"
+  },
+  "general (ALT3).bat": {
+    "original_sha256": "0229d59773af1717d54906873245e3598c00457514178b0e96500780277cea53",
+    "modified_sha256": "af56c6256d38060e634446b76c340f7b033a0189d5cd334387477283bab3d3fd"
+  },
+  "general (ALT4).bat": {
+    "original_sha256": "497c19483a59f3d55a740ce5d45abb1d7429e2f6dc52e39d5e18b6941b8290cf",
+    "modified_sha256": "9cd5bdf55e86de30900528dade58023bcf2b32037a412645ea8f103b4d7840a5"
+  },
+  "general (ALT5).bat": {
+    "original_sha256": "a81c276ecae34c3c39c5d862bbf1ef841ff04864bd854485178adf5a8121f9f8",
+    "modified_sha256": "7e2497c11e2cc3f97597bc53ed14786f348fe784136e3fb201303d3e15015428"
+  },
+  "general (ALT6).bat": {
+    "original_sha256": "ed7a09a6686191fa8a2bf733b5b4d26fefa45c92b62266e1f94bb56aeffcd079",
+    "modified_sha256": "deebd276f8737c0667f8f165baa388f58d0cace4a7389e18d0c868447420da17"
+  },
+  "general (ALT7).bat": {
+    "original_sha256": "57cb714ea0e385ab3cea37543fd9ac7d591142571192217b39a6ce7c04f85f15",
+    "modified_sha256": "cc536868817722ba527182316983eb9f4585ce8bbb15851b7149a3277223b799"
+  },
+  "general (ALT8).bat": {
+    "original_sha256": "4fa90488f6df6f6311fa75a811e1753567c454ebde0ee1484550fb2beed44204",
+    "modified_sha256": "2254536035945ecbc3ea00dac7b26f39be3acc4ce4a42bebce375f243b22ccae"
+  },
+  "general (ALT9).bat": {
+    "original_sha256": "56430f0594058f6a1585509a0b52a532348d9e9913c723a4952fa8009c079d43",
+    "modified_sha256": "0ba87bec57980b52f12729f69947acde416163f0754367dcfaa8a14ff8bba18a"
+  },
+  "general (EXP).bat": {
+    "original_sha256": "e5b8eb98c6a3258969bda9274894f85551d37eec0352df806b0a1fb41b74f17b",
+    "modified_sha256": "a945a59a1663cc2dd3445d54afb8aa69ea60f462899ba1ec912756f0dbfc6d73"
+  },
+  "general (FAKE TLS AUTO ALT).bat": {
+    "original_sha256": "aa026f4030c17f1bf515389c903dc922992dfe29f6affff8494fa1548d1480a7",
+    "modified_sha256": "47675f45cff6407ada7e4dfbce17d1529ddeb696c4ddd0778df798b2ed11abb6"
+  },
+  "general (FAKE TLS AUTO ALT2).bat": {
+    "original_sha256": "0efa20276b94eb675730dc5920c42d8606e93adcaba186fc0306f978c49e8dd7",
+    "modified_sha256": "f0d14c74a2cdbeb38f54d5146f1de504dd4f961dde8dbbaad945001765bf78e9"
+  },
+  "general (FAKE TLS AUTO ALT3).bat": {
+    "original_sha256": "604015c6716f8e52f2b95aa3b1d8690661e4dc7963b3efbbf4ab19fe5f45b4ff",
+    "modified_sha256": "86766aba906c044202ab102bbd5a03e78aec52ec615b07d0486a5122ad66a572"
+  },
+  "general (FAKE TLS AUTO).bat": {
+    "original_sha256": "b181d1db261ba06d5b54baff123d491c6900174bbc22a2a237f9135160b7a948",
+    "modified_sha256": "5b8ba016c6334bad9b0bd9db477b013030697bbf5f8fa406496908b680c32baa"
+  },
+  "general (SIMPLE FAKE ALT).bat": {
+    "original_sha256": "8bffa109e32aabb0360b2dc6be055687a884945fd62fcbe8fa73bdb4f3910df5",
+    "modified_sha256": "304974d9d5ecba8024b545ceb081701d58e58002925137c9f5842d94d4dad009"
+  },
+  "general (SIMPLE FAKE ALT2).bat": {
+    "original_sha256": "16d3f5350f24ce87cd3ec43e0639b76cbd71a53766672939df09cb9d50449fb1",
+    "modified_sha256": "37318111212933c4cc79f6bb8fc4e0ea115e3627daca2bea2b2bb45cfdafd493"
+  },
+  "general (SIMPLE FAKE).bat": {
+    "original_sha256": "f6371c618951df2989db86e717beb4a8440ad9a405a592a85d2c7bffaeac0bb3",
+    "modified_sha256": "1b25c3acd52fdbaa1fbe3f5fa596ebb14df6acc1cd07fd1043b28e1a8abd6d39"
+  },
+  "general.bat": {
+    "original_sha256": "2c0723be1d3539a70392607b9cf2ef590efcceec8e6139b1a0d2984ea1da1947",
+    "modified_sha256": "7164d61e562690200d143ffa4d398c6c015d9d8c1e21f0273792d3b2ae2dde16"
+  },
+  "service.bat": {
+    "original_sha256": "968cca9bd0ae685f0dababeb75cb9181950da3b64fd4948fb53ee39291baf413",
+    "modified_sha256": "36548092b389460858f3988f98cf93004959ea64caef37036223dfcdeb59f368"
+  },
+  "utils/test zapret.ps1": {
+    "original_sha256": "13ce2b57b35b9a0223b0ea2782752bd2e20f550e2b7f0e9de8ae8d3999bfd402",
+    "modified_sha256": "15d206d91fe6d48c6fe250a7a11cebdc0242ba0d2ff419016021ac9197665784"
+  }
+}

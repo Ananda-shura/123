@@ -1,31 +1,38 @@
-# Happ + Zapret: ChatGPT, Telegram Desktop и YouTube
+# Zapret 1.10.4: доработанные исходные файлы релиза
 
-**[Скачать готовую полную папку — ZIP, около 13 МБ](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-happ-ready.zip)**
+**[Скачать готовую полную папку — ZIP, около 13 МБ](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-reworked.zip)**
 
-Проверка на компьютере пользователя показала: YouTube работает с отдельным методом Zapret, ChatGPT сообщает о недоступности региона, Telegram Desktop остаётся на подключении. При закрытом START.cmd и включённом существующем Happ оба последних сервиса работают. Поэтому новая папка сочетает отдельный профиль маршрутизации Happ для ChatGPT/Telegram и прежний YouTube-only запуск Zapret.
+Неофициальная модификация [официального релиза Flowseal 1.10.4](https://github.com/Flowseal/zapret-discord-youtube/releases/tag/1.10.4). Официальный архив скачан повторно и совпал со всеми 59 файлами пользовательской копии. Изменены сами 22 стратегии `general*.bat`, `service.bat` и защитный вход старого тестировщика — **24 исходных текстовых файла**. Все **27 файлов bin** сохранены без изменений.
 
-1. Закройте старое окно START.cmd и распакуйте новый архив в отдельную папку. Прежние папки и профиль Happ сохраните.
-2. Подключите в Happ ваш проверенный рабочий сервер. Запустите **SETUP-HAPP.cmd** из `Zapret-Happ-ready`.
-3. Добавьте открывшийся новый профиль `ChatGPT-Telegram-Selective-…` в Happ, выберите его в маршрутизации и включите использование профиля. Переподключите прежний сервер в том же режиме, с которым работал Telegram.
-4. Запустите **START.cmd**, подтвердите запрос Windows и дождитесь проверки YouTube. Оставьте окно открытым, перезапустите браузер и Telegram Desktop.
+1. Закройте старое окно START.cmd. Прежние папки сохраните.
+2. Распакуйте **весь** архив в **C:\Zapret**. Нужен короткий путь: у команд BAT есть ограничение CMD в 8191 символ.
+3. Откройте `Zapret-1.10.4-reworked`, нажмите **START.cmd** и подтвердите запрос Windows.
+4. Оставьте окно открытым, перезапустите браузер и проверьте YouTube, нужные сайты, Steam и игры. Для остановки закройте окно или нажмите Ctrl+C.
 
-SETUP-HAPP.cmd нужен один раз и при обновлении списка адресов Telegram. Он получает только официальный список Telegram по проверенному HTTPS, строго проверяет диапазоны и создаёт отдельный профиль с уникальным именем. При ошибке загрузки или проверки импорт не запускается. Ссылка и JSON сохраняются в `happ-state/<имя>/` для ручного импорта при необходимости. Скрипт открывает импорт в Happ; выбор профиля и подключение выполняет пользователь. Серверы и подписки в JSON отсутствуют.
+## Что исправлено
 
-По правилам профиля через ваш сервер идут только домены ChatGPT/OpenAI, точечный `challenges.cloudflare.com`, домены Telegram и его официальные IPv4/IPv6-сети. Остальной трафик, включая российские сайты, Steam и YouTube, направляется напрямую. Для YouTube используется неизменённый предыдущий запуск Zapret. Общие сети Cloudflare, Game Filter и правила для всех IP не добавлены.
+- Во всех стратегиях QUIC добавлен узкий список YouTube: в исходнике он применялся только к TCP. Основной Google/OpenAI TCP использует уже сработавший у пользователя FAKE TLS AUTO ALT.
+- Добавлены отдельные списки OpenAI и Telegram Web, а для Telegram Web — отдельный профиль с ранее сработавшими параметрами. Google/OpenAI/Telegram TCP учитывают пользовательские доменные и IP-исключения.
+- Обычный запуск больше не включает глобальные TCP timestamps. Диагностика не удаляет общие службы драйвера и не очищает кэши с завершением приложений.
+- Обнаруженный другой обходчик или повреждённые исполняемые файлы останавливают запуск. Пустой/повреждённый IPSet отклоняется; обновление проверяется до атомарной замены с резервной копией.
+- Широкий ALT5 отключён. EXP больше не обрабатывает неизвестный UDP на Discord-портах. Game Filter выключен; активный IPSet сохраняет исходную документационную заглушку, режим ANY не создаётся.
+- Старый тестировщик, завершавший все winws и временно включавший IPSet ANY, заблокирован. **CHECK.cmd** выполняет проверку файлов и активного IPSet без сетевых тестов.
 
-Новый профиль задаёт **DNS внутри Happ**: Google DoH для удалённого DNS и Yandex DoH для внутреннего. Это собственные параметры нового профиля, а не сохранение DNS прежнего профиля Happ. Скрипты не меняют системный DNS Windows, hosts, реестр, службы, брандмауэр или автозапуск. Откат: выбрать прежний профиль Happ, переподключиться и при необходимости вернуться к прежней папке YouTube.
+Исходные общие списки проекта и исключения Steam/российских сайтов сохранены. Некоторые общие CDN-домены исходного hostlist широкие: работа всех сайтов/игр и нулевая нагрузка WinDivert не гарантируются. Проверка процессов перед запуском не является mutex для одновременных стартов; запускайте одну стратегию. Ручные служебные действия по-прежнему требуют отдельного выбора и подтверждения в менеджере; перед установкой службы закройте standalone-окно.
 
-Работа обоих сервисов через существующий Happ подтверждена пользователем. **Импорт нового выборочного профиля и его совместную работу с YouTube-only Zapret ещё нужно проверить на Windows.** Проверки кода/JSON/Base64/границ правил и отказов выполнены в Linux PowerShell; они не подтверждают реальную маршрутизацию, TUN/sniffing, все российские сайты, медиа/звонки Telegram или игровые показатели. Все 59 исходных файлов Zapret, бинарники и драйверы сохранены. Лицензии и исходники зависимостей включены в ZIP.
+Региональная ошибка ChatGPT уже подтверждена пользователем: доработка DPI не меняет внешний IP/страну. Работа Telegram Web не подтверждает работу Telegram Desktop; его предыдущий отдельный DPI-профиль в этой сети не помог. Пользователь подтвердил, что ChatGPT и Telegram Desktop работают через существующий Happ. Эта модификация исходного релиза **не настраивает Happ и не объявляется исправлением этих двух ограничений**.
 
-- [Инструкция](happ-launcher/СНАЧАЛА-ПРОЧИТАЙ.txt)
-- [Исходник настройки Happ](happ-launcher/happ/setup-happ.ps1)
-- [Причина и изменения](happ-launcher/review/HAPP-CHANGES.md), [проверки](happ-launcher/review/HAPP-VALIDATION.md), [официальные источники](happ-launcher/review/HAPP-SOURCE-PROVENANCE.json)
-- [SHA256 архива](zapret-happ-ready.zip.sha256)
+Проверки структуры правил, PowerShell, неизменности бинарников, официального каталога IPSet и сценариев отказа прошли в Linux. **Windows CMD/UAC/SCM/WinDivert и работа новой сборки у провайдера ещё не проверены.** Упакованы лицензии, исходники зависимостей и оригинальные версии изменённых файлов для отката.
+
+- [Инструкция](reworked-original/СНАЧАЛА-ПРОЧИТАЙ.txt), [изменённый general.bat](reworked-original/general.bat), [изменённый service.bat](reworked-original/service.bat)
+- [Точный diff](reworked-original/review/changes.diff), [аудит изменений](reworked-original/review/AUDIT-CHANGES.md), [результаты проверок](reworked-original/review/VALIDATION.md)
+- [Исходные версии изменённых файлов](reworked-original/original-files), [происхождение](reworked-original/review/SOURCE.json), [SHA256 архива](zapret-1.10.4-reworked.zip.sha256)
 
 ## Предыдущие варианты
 
-- [YouTube-only: подтверждённый предыдущий подбор](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-auto-test.zip), [исходник](auto-launcher/autopick.ps1), [проверки](auto-launcher/AUTO-VALIDATION.md).
-- [Расширенный вариант только с DPI-правилами](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-expanded.zip), [исходник](expanded-launcher/expanded/expanded.ps1), [изменения](expanded-launcher/review/EXPANDED-CHANGES.md). Проверка подтвердила YouTube и Telegram Web; региональный отказ ChatGPT и Telegram Desktop этим способом не устранены.
-- [Исходная полная папка с фиксированной стратегией](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-ready-full.zip), [дополнение без бинарников](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-optimized.zip), [диагностика DNS/HTTPS](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/youtube-diagnostic.zip).
+- [Happ + YouTube-only Zapret](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-happ-ready.zip): отдельный выборочный профиль Happ для ChatGPT/Telegram через уже работающий сервер. [Инструкция](happ-launcher/СНАЧАЛА-ПРОЧИТАЙ.txt), [проверки](happ-launcher/review/HAPP-VALIDATION.md). Новый выборочный импорт требует проверки на Windows.
+- [Предыдущий подтверждённый подбор YouTube](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-auto-test.zip), [исходник](auto-launcher/autopick.ps1), [проверки](auto-launcher/AUTO-VALIDATION.md).
+- [Расширенный вариант только с DPI-правилами](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-expanded.zip): подтверждены YouTube и Telegram Web, регион ChatGPT/Telegram Desktop этим способом не устранены.
+- [Первая полная папка](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-ready-full.zip), [дополнение без бинарников](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-optimized.zip), [диагностика DNS/HTTPS](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/youtube-diagnostic.zip).
 
-[Аудит релиза](zapret-files/AUDIT.md), [таблица стратегий](zapret-files/STRATEGIES.md), [происхождение файлов](zapret-files/PROVENANCE.md).
+[Первоначальный аудит релиза](zapret-files/AUDIT.md), [таблица исходных стратегий](zapret-files/STRATEGIES.md), [происхождение оригиналов](zapret-files/PROVENANCE.md).

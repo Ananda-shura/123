@@ -1,0 +1,1862 @@
+--- a/general (ALT).bat
++++ b/general (ALT).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT10).bat
++++ b/general (ALT10).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=none --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_4pda_to.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_4pda_to.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT11).bat
++++ b/general (ALT11).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT12).bat
++++ b/general (ALT12).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%stun.bin" --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=3 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT13).bat
++++ b/general (ALT13).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=5 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=7 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=mail.ru,altorder=1 --dpi-desync-repeats=5 --dpi-desync-fake-tls="%BIN%tls_clienthello_sochi_park.bin" --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_sochi_park.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=mail.ru,altorder=1 --dpi-desync-repeats=5 --dpi-desync-fake-tls="%BIN%tls_clienthello_sochi_park.bin" --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_sochi_park.bin" --new ^
+--- a/general (ALT2).bat
++++ b/general (ALT2).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=multisplit --dpi-desync-split-seqovl=652 --dpi-desync-split-pos=2 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=652 --dpi-desync-split-pos=2 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=652 --dpi-desync-split-pos=2 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-seqovl=652 --dpi-desync-split-pos=2 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-seqovl=652 --dpi-desync-split-pos=2 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+--- a/general (ALT3).bat
++++ b/general (ALT3).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-hostfakesplit-mod=host=www.google.com,altorder=1 --dpi-desync-fooling=ts --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-hostfakesplit-mod=host=www.google.com,altorder=1 --dpi-desync-fooling=ts --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-hostfakesplit-mod=host=www.google.com,altorder=1 --dpi-desync-fooling=ts --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=ya.ru --dpi-desync-hostfakesplit-mod=host=ya.ru,altorder=1 --dpi-desync-fooling=ts --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=ya.ru --dpi-desync-hostfakesplit-mod=host=ya.ru,altorder=1 --dpi-desync-fooling=ts --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT4).bat
++++ b/general (ALT4).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls="%BIN%stun.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT5).bat
++++ b/general (ALT5).bat
+@@ -1,21 +1,29 @@
+ @echo off
++setlocal DisableDelayedExpansion
++echo ALT5 is disabled in this reviewed build: its SYN strategy affects broad IPv4 TCP traffic.
++echo Use START.cmd or another general strategy.
++pause
++exit /b 1
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ :: NOT RECOMMENDED
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-l3=ipv4 --filter-tcp=80,443,2053,2083,2087,2096,8443 --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=syndata,multidisorder --new ^
+ --filter-tcp=%GameFilterTCP% --ipset="%LISTS%ipset-all.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=syndata,multidisorder --dpi-desync-any-protocol=1 --dpi-desync-cutoff=n4 --new ^
+--- a/general (ALT6).bat
++++ b/general (ALT6).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+--- a/general (ALT7).bat
++++ b/general (ALT7).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=multisplit --dpi-desync-split-pos=2,sniext+1 --dpi-desync-split-seqovl=679 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-pos=2,sniext+1 --dpi-desync-split-seqovl=679 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-pos=2,sniext+1 --dpi-desync-split-seqovl=679 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-pos=2,sniext+1 --dpi-desync-split-seqovl=679 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=syndata --new ^
+--- a/general (ALT8).bat
++++ b/general (ALT8).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (ALT9).bat
++++ b/general (ALT9).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts,md5sig --dpi-desync-hostfakesplit-mod=host=ozon.ru --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=ozon.ru --new ^
+--- a/general (EXP).bat
++++ b/general (EXP).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-l7=quic --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+---filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun,unknown --dpi-desync=fake --dpi-desync-any-protocol=1 --dpi-desync-fake-discord="%BIN%quic_initial_www_google_com.bin" --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-unknown-udp="%BIN%quic_initial_www_google_com.bin" --dpi-desync-fake-unknown-udp="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=4 --dpi-desync-cutoff=n4 --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-l7=quic --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++--filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%quic_initial_www_google_com.bin" --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=4 --dpi-desync-cutoff=n4 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=480 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=4 --dpi-desync-split-seqovl-pattern="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --hostlist-exclude-domains=fonts.googleapis.com --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=480 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=4 --dpi-desync-split-seqovl-pattern="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (FAKE TLS AUTO ALT).bat
++++ b/general (FAKE TLS AUTO ALT).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (FAKE TLS AUTO ALT2).bat
++++ b/general (FAKE TLS AUTO ALT2).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (FAKE TLS AUTO ALT3).bat
++++ b/general (FAKE TLS AUTO ALT3).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (FAKE TLS AUTO).bat
++++ b/general (FAKE TLS AUTO).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (SIMPLE FAKE ALT).bat
++++ b/general (SIMPLE FAKE ALT).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (SIMPLE FAKE ALT2).bat
++++ b/general (SIMPLE FAKE ALT2).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%stun2.bin" --dpi-desync-fake-tls="%BIN%tls_clienthello_www_sferum_ru.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general (SIMPLE FAKE).bat
++++ b/general (SIMPLE FAKE).bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls="%BIN%tls_clienthello_www_google_com.bin" --dpi-desync-fake-http="%BIN%tls_clienthello_www_sferum_ru.bin" --new ^
+--- a/general.bat
++++ b/general.bat
+@@ -1,23 +1,28 @@
+ @echo off
++setlocal DisableDelayedExpansion
+ chcp 65001 > nul
+ :: 65001 - UTF-8
+ 
+-cd /d "%~dp0"
+-call service.bat status_zapret
+-call service.bat check_updates
+-call service.bat load_game_filter
+-call service.bat load_user_lists
++cd /d "%~dp0" || exit /b 1
++call "%~dp0service.bat" status_zapret
++if errorlevel 1 (
++    pause
++    exit /b 1
++)
++call "%~dp0service.bat" load_game_filter
++call "%~dp0service.bat" load_user_lists
+ echo:
+ 
+ set "BIN=%~dp0bin\"
+ set "LISTS=%~dp0lists\"
+-cd /d %BIN%
++cd /d "%BIN%" || exit /b 1
+ 
+-start "zapret: %~n0" /min "%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
+---filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
++"%BIN%winws.exe" --wf-tcp=80,443,2053,2083,2087,2096,8443,%GameFilterTCP% --wf-udp=443,19294-19344,50000-50100,%GameFilterUDP% ^
++--filter-udp=443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist="%LISTS%list-youtube.txt" --hostlist="%LISTS%list-openai.txt" --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-udp=19294-19344,50000-50100 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-fake-discord="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-fake-stun="%BIN%ACTIVE_DISCORD_UDP.bin" --dpi-desync-repeats=6 --new ^
+ --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+---filter-tcp=443 --hostlist="%LISTS%list-google.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-google.txt" --hostlist="%LISTS%list-openai.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
++--filter-tcp=443 --hostlist="%LISTS%list-telegram.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --ip-id=zero --dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_www_google_com.bin" --new ^
+ --filter-tcp=80,443 --hostlist="%LISTS%list-general.txt" --hostlist="%LISTS%list-general-user.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-seqovl=568 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_4pda_to.bin" --new ^
+ --filter-udp=443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fake-quic="%BIN%quic_initial_www_google_com.bin" --new ^
+ --filter-tcp=80,443,8443 --ipset="%LISTS%ipset-all.txt" --hostlist-exclude="%LISTS%list-exclude.txt" --hostlist-exclude="%LISTS%list-exclude-user.txt" --ipset-exclude="%LISTS%ipset-exclude.txt" --ipset-exclude="%LISTS%ipset-exclude-user.txt" --dpi-desync=multisplit --dpi-desync-split-seqovl=568 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern="%BIN%tls_clienthello_4pda_to.bin" --new ^
+--- a/service.bat
++++ b/service.bat
+@@ -2,18 +2,15 @@
+ set "LOCAL_VERSION=1.10.4"
+ 
+ :: External commands
+-if "%~1"=="status_zapret" (
+-    call :test_service zapret soft
+-    call :tcp_enable
+-    exit /b
+-)
++if "%~1"=="status_zapret" goto reviewed_preflight
++if "%~1"=="check_files" goto reviewed_check_files
+ 
+ if "%~1"=="check_updates" (
+     if defined NO_UPDATE_CHECK exit /b
+ 
+     if exist "%~dp0utils\check_updates.enabled" (
+         if not "%~2"=="soft" (
+-            start /b service check_updates soft
++            start "" /b "%ComSpec%" /d /c call "%~f0" check_updates soft
+         ) else (
+             call :service_check_updates soft
+         )
+@@ -33,20 +30,21 @@
+ )
+ 
+ if "%1"=="admin" (
+-    call :check_command chcp
+-    call :check_command find
+-    call :check_command findstr
+-    call :check_command netsh
++    call :check_command chcp || exit /b 1
++    call :check_command find || exit /b 1
++    call :check_command findstr || exit /b 1
++    call :check_command netsh || exit /b 1
+     
+     call :load_user_lists
+ 
+     echo Started with admin rights
+ ) else (
+-    call :check_extracted
+-    call :check_command powershell
++    call :check_extracted || exit /b 1
++    call :check_command powershell || exit /b 1
+ 
+     echo Requesting admin rights...
+-    powershell -NoProfile -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin\"' -Verb RunAs"
++    set "ZAPRET_REVIEW_SERVICE=%~f0"
++    powershell -NoProfile -Command "try { Start-Process -FilePath $env:ZAPRET_REVIEW_SERVICE -ArgumentList 'admin' -Verb RunAs -ErrorAction Stop } catch { Write-Host 'Administrator request was cancelled or failed.'; exit 1 }"
+     exit
+ )
+ 
+@@ -72,7 +70,7 @@
+ echo.
+ echo   :: SERVICE
+ echo      1. Install Service
+-echo      2. Remove Services
++echo      2. Remove this folder's zapret service
+ echo      3. Check Status
+ echo.
+ echo   :: SETTINGS
+@@ -83,12 +81,12 @@
+ echo.
+ echo   :: UPDATES
+ echo      8. Update IPSet List
+-echo      9. Update Hosts File
++echo      9. Hosts information (manual only)
+ echo      10. Check for Updates
+ echo.
+ echo   :: TOOLS
+-echo      11. Run Diagnostics
+-echo      12. Run Tests
++echo      11. Diagnostics (read-only)
++echo      12. Check files (read-only)
+ echo.
+ echo   ----------------------------------------
+ echo      0. Exit
+@@ -132,9 +130,8 @@
+ 
+ :: TCP ENABLE ==========================
+ :tcp_enable
+-chcp 437 > nul
+-netsh interface tcp show global | findstr /i "timestamps" | findstr /i "enabled" > nul || netsh interface tcp set global timestamps=enabled > nul 2>&1
+-exit /b
++:: Kept for batch compatibility. Global TCP timestamps are never changed here.
++exit /b 0
+ 
+ 
+ :: STATUS ==============================
+@@ -194,33 +191,26 @@
+ :service_remove
+ cls
+ chcp 65001 > nul
+-
+-set SRVCNAME=zapret
+-sc query "!SRVCNAME!" >nul 2>&1
+-if !errorlevel!==0 (
+-    net stop %SRVCNAME%
+-    sc delete %SRVCNAME%
+-) else (
+-    echo Service "%SRVCNAME%" is not installed.
+-)
+-
+-tasklist /FI "IMAGENAME eq winws.exe" | find /I "winws.exe" > nul
+-if !errorlevel!==0 (
+-    taskkill /IM winws.exe /F > nul
+-)
+-
+-sc query "WinDivert" >nul 2>&1
+-if !errorlevel!==0 (
+-    net stop "WinDivert"
+-
+-    sc query "WinDivert" >nul 2>&1
+-    if !errorlevel!==0 (
+-        sc delete "WinDivert"
+-    )
+-)
+-net stop "WinDivert14" >nul 2>&1
+-sc delete "WinDivert14" >nul 2>&1
+-
++call :reviewed_support CheckServiceOwner
++if errorlevel 1 (
++    pause
++    goto menu
++)
++sc query "zapret" >nul 2>&1
++if errorlevel 1 (
++    echo Service "zapret" is not installed.
++    pause
++    goto menu
++)
++echo Only the zapret service belonging to this folder will be stopped and removed.
++echo Shared WinDivert drivers and other processes are left unchanged.
++sc qc "zapret"
++set "REMOVE_CONFIRM="
++set /p "REMOVE_CONFIRM=Type REMOVE to stop and delete this zapret service (Enter cancels): "
++if not "!REMOVE_CONFIRM!"=="REMOVE" goto menu
++net stop "zapret"
++sc delete "zapret"
++if errorlevel 1 echo Could not delete zapret. No shared drivers or unrelated processes were removed.
+ pause
+ goto menu
+ 
+@@ -238,7 +228,7 @@
+ :: Searching for .bat files in current folder, except files that start with "service"
+ echo Pick one of the options:
+ set "count=0"
+-for /f "delims=" %%F in ('powershell -NoProfile -Command "Get-ChildItem -LiteralPath '.' -Filter '*.bat' | Where-Object { $_.Name -notlike 'service*' } | Sort-Object { [Regex]::Replace($_.Name, '(\d+)', { $args[0].Value.PadLeft(8, '0') }) } | ForEach-Object { $_.Name }"') do (
++for /f "delims=" %%F in ('powershell -NoProfile -Command "Get-ChildItem -LiteralPath '.' -Filter 'general*.bat' | Where-Object { $_.Name -ne 'general (ALT5).bat' } | Sort-Object { [Regex]::Replace($_.Name, '(\d+)', { $args[0].Value.PadLeft(8, '0') }) } | ForEach-Object { $_.Name }"') do (
+     set /a count+=1
+     echo   !count!. %%F
+     set "file!count!=%%F"
+@@ -260,6 +250,7 @@
+ )
+ 
+ set "selectedFile=!file%choice%!"
++if /i "!selectedFile!"=="general (ALT5).bat" goto menu
+ if not defined selectedFile (
+     echo Invalid choice, exiting...
+     pause
+@@ -343,19 +334,44 @@
+     )
+ )
+ 
+-:: Creating service with parsed args
+-call :tcp_enable
++:: Creating service with parsed args (no global TCP settings change)
+ 
+ set ARGS=%args%
+ call set "ARGS=%%ARGS:EXCL_MARK=^!%%"
+ echo Final args: !ARGS!
+ set SRVCNAME=zapret
+ 
++if not defined ARGS (
++    echo Selected strategy did not contain valid arguments. Nothing was installed.
++    pause
++    goto menu
++)
++call :reviewed_support Validate
++if errorlevel 1 (
++    pause
++    goto menu
++)
++call :reviewed_support CheckServiceOwner
++if errorlevel 1 (
++    pause
++    goto menu
++)
++echo This action installs or replaces this folder's zapret service with automatic startup.
++echo Review the final arguments above. Other folders' services will not be replaced.
++set "INSTALL_CONFIRM="
++set /p "INSTALL_CONFIRM=Type INSTALL to continue (Enter cancels): "
++if not "!INSTALL_CONFIRM!"=="INSTALL" goto menu
+ net stop %SRVCNAME% >nul 2>&1
+ sc delete %SRVCNAME% >nul 2>&1
+ sc create %SRVCNAME% binPath= "\"%BIN_PATH%winws.exe\" !ARGS!" DisplayName= "zapret" start= auto
++if errorlevel 1 (
++    echo Service creation failed. Close Services.msc if it is holding the old service open and retry.
++    pause
++    goto menu
++)
+ sc description %SRVCNAME% "Zapret DPI bypass software"
+ sc start %SRVCNAME%
++if errorlevel 1 echo The service was created but did not start. Check its arguments and permissions.
+ for %%F in ("!file%choice%!") do (
+     set "filename=%%~nF"
+ )
+@@ -368,7 +384,8 @@
+ :: CHECK UPDATES =======================
+ :service_check_updates
+ chcp 437 > nul
+-cls
++if not "%~1"=="soft" cls
++set "GITHUB_VERSION="
+ 
+ :: Set current version and URLs
+ set "GITHUB_VERSION_URL=https://raw.githubusercontent.com/Flowseal/zapret-discord-youtube/main/.service/version.txt"
+@@ -382,7 +399,7 @@
+ if not defined GITHUB_VERSION (
+     echo Warning: failed to fetch the latest version. This warning does not affect the operation of zapret
+     timeout /T 9
+-    if "%1"=="soft" exit 
++    if "%~1"=="soft" exit /b
+     goto menu
+ )
+ 
+@@ -390,7 +407,7 @@
+ if "%LOCAL_VERSION%"=="%GITHUB_VERSION%" (
+     echo Latest version installed: %LOCAL_VERSION%
+     
+-    if "%1"=="soft" exit 
++    if "%~1"=="soft" exit /b
+     pause
+     goto menu
+ ) 
+@@ -398,11 +415,11 @@
+ echo New version available: %GITHUB_VERSION%
+ echo Release page: %GITHUB_RELEASE_URL%%GITHUB_VERSION%
+ 
+-echo Opening the download page...
+-start "" "%GITHUB_DOWNLOAD_URL%"
+-
+-
+-if "%1"=="soft" exit 
++echo Download page: %GITHUB_DOWNLOAD_URL%
++echo Open it manually if you choose to update.
++
++
++if "%~1"=="soft" exit /b
+ pause
+ goto menu
+ 
+@@ -446,19 +463,9 @@
+ )
+ echo:
+ 
+-:: TCP timestamps check
+-netsh interface tcp show global | findstr /i "timestamps" | findstr /i "enabled" > nul
+-if !errorlevel!==0 (
+-    call :PrintGreen "TCP timestamps check passed"
+-) else (
+-    call :PrintYellow "[?] TCP timestamps are disabled. Enabling timestamps..."
+-    netsh interface tcp set global timestamps=enabled > nul 2>&1
+-    if !errorlevel!==0 (
+-        call :PrintGreen "TCP timestamps successfully enabled"
+-    ) else (
+-        call :PrintRed "[X] Failed to enable TCP timestamps"
+-    )
+-)
++:: TCP timestamps information (read-only)
++netsh interface tcp show global
++call :PrintYellow "TCP settings are displayed only. This diagnostic does not change timestamps."
+ echo:
+ 
+ :: AdguardSvc.exe
+@@ -564,7 +571,7 @@
+         )
+     )
+     call :PrintYellow "[?] VPN services found:!VPN_SERVICES!. Some VPNs can conflict with zapret"
+-    call :PrintYellow "Make sure that all VPNs are disabled"
++    call :PrintYellow "An installed VPN service does not prove an active VPN connection. Check the actual connection in its application."
+ ) else (
+     call :PrintGreen "VPN check passed"
+ )
+@@ -596,60 +603,11 @@
+     )
+ )
+ 
+-:: WinDivert conflict
+-tasklist /FI "IMAGENAME eq winws.exe" | find /I "winws.exe" > nul
+-set "winws_running=!errorlevel!"
+-
+-sc query "WinDivert" | findstr /I "RUNNING STOP_PENDING" > nul
+-set "windivert_running=!errorlevel!"
+-
+-if !winws_running! neq 0 if !windivert_running!==0 (
+-    call :PrintYellow "[?] winws.exe is not running but WinDivert service is active. Attempting to delete WinDivert..."
+-    
+-    net stop "WinDivert" >nul 2>&1
+-    sc delete "WinDivert" >nul 2>&1
+-    sc query "WinDivert" >nul 2>&1
+-    if !errorlevel!==0 (
+-        call :PrintRed "[X] Failed to delete WinDivert. Checking for conflicting services..."
+-        
+-        set "conflicting_services=GoodbyeDPI"
+-        set "found_conflict=0"
+-        
+-        for %%s in (!conflicting_services!) do (
+-            sc query "%%s" >nul 2>&1
+-            if !errorlevel!==0 (
+-                call :PrintYellow "[?] Found conflicting service: %%s. Stopping and removing..."
+-                net stop "%%s" >nul 2>&1
+-                sc delete "%%s" >nul 2>&1
+-                if !errorlevel!==0 (
+-                    call :PrintGreen "Successfully removed service: %%s"
+-                ) else (
+-                    call :PrintRed "[X] Failed to remove service: %%s"
+-                )
+-                set "found_conflict=1"
+-            )
+-        )
+-        
+-        if !found_conflict!==0 (
+-            call :PrintRed "[X] No conflicting services found. Check manually if any other bypass is using WinDivert."
+-        ) else (
+-            call :PrintYellow "[?] Attempting to delete WinDivert again..."
+-
+-            net stop "WinDivert" >nul 2>&1
+-            sc delete "WinDivert" >nul 2>&1
+-            sc query "WinDivert" >nul 2>&1
+-            if !errorlevel! neq 0 (
+-                call :PrintGreen "WinDivert successfully deleted after removing conflicting services"
+-            ) else (
+-                call :PrintRed "[X] WinDivert still cannot be deleted. Check manually if any other bypass is using WinDivert."
+-            )
+-        )
+-    ) else (
+-        call :PrintGreen "WinDivert successfully removed"
+-    )
+-    
+-    echo:
+-)
++:: WinDivert information (read-only; shared driver ownership is unknown)
++sc query "WinDivert"
++sc query "WinDivert14"
++call :PrintYellow "A running driver may belong to another application. No driver or service is stopped or deleted."
++echo:
+ 
+ :: Conflicting bypasses
+ set "conflicting_services=GoodbyeDPI discordfix_zapret winws1 winws2"
+@@ -669,62 +627,11 @@
+ )
+ 
+ if !found_any_conflict!==1 (
+-    call :PrintRed "[X] Conflicting bypass services found: !found_conflicts!"
+-    
+-    set "CHOICE="
+-    set /p "CHOICE=Do you want to remove these conflicting services? (Y/N) (default: N) "
+-    if "!CHOICE!"=="" set "CHOICE=N"
+-    if "!CHOICE!"=="y" set "CHOICE=Y"
+-    
+-    if /i "!CHOICE!"=="Y" (
+-        for %%s in (!found_conflicts!) do (
+-            call :PrintYellow "Stopping and removing service: %%s"
+-            net stop "%%s" >nul 2>&1
+-            sc delete "%%s" >nul 2>&1
+-            if !errorlevel!==0 (
+-                call :PrintGreen "Successfully removed service: %%s"
+-            ) else (
+-                call :PrintRed "[X] Failed to remove service: %%s"
+-            )
+-        )
+-
+-        net stop "WinDivert" >nul 2>&1
+-        sc delete "WinDivert" >nul 2>&1
+-        net stop "WinDivert14" >nul 2>&1
+-        sc delete "WinDivert14" >nul 2>&1
+-    )
+-    
+-    echo:
+-)
+-
+-:: Discord cache clearing
+-set "CHOICE="
+-set /p "CHOICE=Do you want to clear the Discord cache (Stable, PTB, Canary, Development)? (Y/N) (default: Y) "
+-if "!CHOICE!"=="" set "CHOICE=Y"
+-if "!CHOICE!"=="y" set "CHOICE=Y"
+-
+-if /i "!CHOICE!"=="Y" (
+-    set "discordFound=0"
+-    if exist "%APPDATA%\discord\" (
+-        set "discordFound=1"
+-        call :clear_discord_cache "Discord.exe" "Discord" "%APPDATA%\discord"
+-    )
+-    if exist "%APPDATA%\discordptb\" (
+-        set "discordFound=1"
+-        call :clear_discord_cache "DiscordPTB.exe" "Discord PTB" "%APPDATA%\discordptb"
+-    )
+-    if exist "%APPDATA%\discordcanary\" (
+-        set "discordFound=1"
+-        call :clear_discord_cache "DiscordCanary.exe" "Discord Canary" "%APPDATA%\discordcanary"
+-    )
+-    if exist "%APPDATA%\discorddevelopment\" (
+-        set "discordFound=1"
+-        call :clear_discord_cache "DiscordDevelopment.exe" "Discord Development" "%APPDATA%\discorddevelopment"
+-    )
+-    if !discordFound! equ 0 call :PrintRed "Discord installations were not found"
+-    set "discordFound="
+-)
+-echo:
++    call :PrintYellow "Other bypass services found: !found_conflicts!"
++    call :PrintYellow "This diagnostic only reports them. Manage their own applications if necessary."
++)
++echo:
++call :PrintGreen "Read-only diagnostics finished. No caches, services, drivers or TCP settings were changed."
+ 
+ pause
+ goto menu
+@@ -732,7 +639,6 @@
+ 
+ :: GAME SWITCH ========================
+ :game_switch_status
+-chcp 437 > nul
+ 
+ set "gameFlagFile=%~dp0utils\game_filter.enabled"
+ set "GameFilterMode=disabled"
+@@ -1043,191 +949,57 @@
+ 
+ :: IPSET SWITCH =======================
+ :ipset_switch_status
+-chcp 437 > nul
+-
+ set "listFile=%~dp0lists\ipset-all.txt"
++set "IPsetStatus=invalid (reset to none)"
++if not exist "%listFile%" exit /b
+ for /f %%i in ('type "%listFile%" 2^>nul ^| find /c /v ""') do set "lineCount=%%i"
+-
+-if !lineCount!==0 (
+-    set "IPsetStatus=any"
+-) else (
+-    findstr /C:"203.0.113.113/32" "%listFile%" >nul
+-    if !errorlevel!==0 (
+-        set "IPsetStatus=none"
+-    ) else (
+-        set "IPsetStatus=loaded"
+-    )
+-)
+-exit /b
+-
++if !lineCount!==0 exit /b
++findstr /X /C:"203.0.113.113/32" "%listFile%" >nul
++if not errorlevel 1 (
++    if !lineCount!==1 (set "IPsetStatus=none") else set "IPsetStatus=loaded"
++) else (
++    set "IPsetStatus=loaded"
++)
++exit /b
+ 
+ :ipset_switch
+-chcp 437 > nul
+-cls
+-
+-set "listFile=%~dp0lists\ipset-all.txt"
+-set "backupFile=%listFile%.backup"
+-
+-if "%IPsetStatus%"=="loaded" (
+-    echo Switching to none mode...
+-    
+-    if not exist "%backupFile%" (
+-        ren "%listFile%" "ipset-all.txt.backup"
+-    ) else (
+-        del /f /q "%backupFile%"
+-        ren "%listFile%" "ipset-all.txt.backup"
+-    )
+-    
+-    >"%listFile%" (
+-        echo 203.0.113.113/32
+-    )
+-    
+-) else if "%IPsetStatus%"=="none" (
+-    echo Switching to any mode...
+-    
+-    >"%listFile%" (
+-        rem Creating empty file
+-    )
+-    
+-) else if "%IPsetStatus%"=="any" (
+-    echo Switching to loaded mode...
+-    
+-    if exist "%backupFile%" (
+-        del /f /q "%listFile%"
+-        ren "%backupFile%" "ipset-all.txt"
+-    ) else (
+-        echo Error: no backup to restore. Update list from service menu first
+-        pause
+-        goto menu
+-    )
+-    
+-)
+-
++cls
++chcp 65001 > nul
++echo IPSet has only none and loaded modes in this build. Empty ANY mode is disabled.
++call :reviewed_support SwitchIpSet
+ pause
+ goto menu
+ 
+ 
+ :: IPSET UPDATE =======================
+ :ipset_update
+-chcp 437 > nul
+-cls
+-
+-set "listFile=%~dp0lists\ipset-all.txt"
+-set "url=https://raw.githubusercontent.com/Flowseal/zapret-discord-youtube/refs/heads/main/.service/ipset-service.txt"
+-
+-echo Updating ipset-all...
+-
+-if exist "%SystemRoot%\System32\curl.exe" (
+-    curl --version | find "libcurl/7"
+-    if !errorlevel!==0 (
+-        curl --ssl-no-revoke -L -f -o "%listFile%" "%url%"
+-    ) else (
+-        curl --ssl-revoke-best-effort -L -f -o "%listFile%" "%url%"
+-    )
+-) else (
+-    powershell -NoProfile -Command ^
+-        "$url = '%url%';" ^
+-        "$out = '%listFile%';" ^
+-        "$dir = Split-Path -Parent $out;" ^
+-        "if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null };" ^
+-        "$res = Invoke-WebRequest -Uri $url -TimeoutSec 10 -UseBasicParsing;" ^
+-        "if ($res.StatusCode -eq 200) { $res.Content | Out-File -FilePath $out -Encoding UTF8 } else { exit 1 }"
+-)
+-
+-echo Finished
+-
++cls
++chcp 65001 > nul
++echo Updating from the official HTTPS source with strict validation.
++echo If IPSet is disabled, only the backup is updated; filtering remains disabled.
++call :reviewed_support UpdateIpSet
++if errorlevel 1 echo Update failed. The active file was not replaced by an invalid download.
+ pause
+ goto menu
+ 
+ 
+ :: HOSTS UPDATE =======================
+ :hosts_update
+-chcp 437 > nul
+-cls
+-
+-set "hostsFile=%SystemRoot%\System32\drivers\etc\hosts"
+-set "hostsUrl=https://raw.githubusercontent.com/Flowseal/zapret-discord-youtube/refs/heads/main/.service/hosts"
+-set "tempFile=%TEMP%\zapret_hosts.txt"
+-set "needsUpdate=0"
+-
+-set "cacheBuster=%RANDOM%%RANDOM%%RANDOM%"
+-set "requestUrl=%hostsUrl%?t=%cacheBuster%"
+-
+-echo Checking hosts file...
+-
+-if exist "%SystemRoot%\System32\curl.exe" (
+-    curl -L -s -f -o "%tempFile%" "%requestUrl%"
+-) else (
+-    powershell -NoProfile -Command ^
+-        "$url = '%requestUrl%';" ^
+-        "$out = '%tempFile%';" ^
+-        "$res = Invoke-WebRequest -Uri $url -TimeoutSec 10 -UseBasicParsing;" ^
+-        "if ($res.StatusCode -eq 200) { $res.Content | Out-File -FilePath $out -Encoding UTF8 } else { exit 1 }"
+-)
+-if not exist "%tempFile%" (
+-    call :PrintRed "Failed to download hosts file from repository"
+-    call :PrintYellow "Copy hosts file manually from %hostsUrl%"
+-    pause
+-    goto menu
+-)
+-
+-set "firstLine="
+-set "lastLine="
+-for /f "usebackq delims=" %%a in ("%tempFile%") do (
+-    if not defined firstLine (
+-        set "firstLine=%%a"
+-    )
+-    set "lastLine=%%a"
+-)
+-
+-findstr /C:"!firstLine!" "%hostsFile%" >nul 2>&1
+-if !errorlevel! neq 0 (
+-    echo First line from repository not found in hosts file
+-    set "needsUpdate=1"
+-)
+-
+-findstr /C:"!lastLine!" "%hostsFile%" >nul 2>&1
+-if !errorlevel! neq 0 (
+-    echo Last line from repository not found in hosts file
+-    set "needsUpdate=1"
+-)
+-
+-if "%needsUpdate%"=="1" (
+-    echo:
+-    call :PrintYellow "Hosts file needs to be updated"
+-    call :PrintYellow "Please manually copy the content from the downloaded file to your hosts file"
+-    
+-    start notepad "%tempFile%"
+-    explorer /select,"%hostsFile%"
+-) else (
+-    call :PrintGreen "Hosts file is up to date"
+-    if exist "%tempFile%" del /f /q "%tempFile%"
+-)
+-
+-echo:
++cls
++chcp 65001 > nul
++echo Windows hosts is not downloaded, edited or replaced by this build.
++echo Review any hosts changes manually if a separate diagnosis requires them.
++echo Official reference: https://github.com/Flowseal/zapret-discord-youtube/blob/1.10.4/.service/hosts
+ pause
+ goto menu
+ 
+ 
+ :: RUN TESTS =============================
+ :run_tests
+-chcp 437 >nul
+-cls
+-
+-:: Require PowerShell 3.0+
+-powershell -NoProfile -Command "if ($PSVersionTable -and $PSVersionTable.PSVersion -and $PSVersionTable.PSVersion.Major -ge 3) { exit 0 } else { exit 1 }" >nul 2>&1
+-if %errorLevel% neq 0 (
+-    echo PowerShell 3.0 or newer is required.
+-    echo Please upgrade PowerShell and rerun this script.
+-    echo.
+-    pause
+-    goto menu
+-)
+-
+-echo Starting configuration tests in PowerShell window...
+-echo.
+-start "" powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0utils\test zapret.ps1"
+-pause
++cls
++chcp 65001 > nul
++echo Running file and IPSet checks only. No strategy processes or network requests are started.
++call "%~dp0CHECK.cmd"
+ goto menu
+ 
+ 
+@@ -1240,41 +1012,6 @@
+ 
+ :: Utility functions
+ 
+-:clear_discord_cache
+-setlocal EnableDelayedExpansion
+-set "discordProcess=%~1"
+-set "discordName=%~2"
+-set "discordCacheDir=%~3"
+-
+-tasklist /FI "IMAGENAME eq !discordProcess!" 2>nul | findstr /I /C:"!discordProcess!" >nul
+-if !errorlevel! equ 0 (
+-    echo !discordName! is running, closing...
+-    taskkill /IM "!discordProcess!" /F >nul 2>&1
+-    if !errorlevel! equ 0 (
+-        call :PrintGreen "!discordName! was successfully closed"
+-    ) else (
+-        call :PrintRed "Unable to close !discordName!"
+-    )
+-)
+-
+-if exist "!discordCacheDir!\" (
+-    for %%d in ("Cache" "Code Cache" "GPUCache") do (
+-        set "dirPath=!discordCacheDir!\%%~d"
+-        if exist "!dirPath!\" (
+-            rd /s /q "!dirPath!" >nul 2>&1
+-            if exist "!dirPath!\" (
+-                call :PrintRed "Failed to delete !dirPath!"
+-            ) else (
+-                call :PrintGreen "Successfully deleted !dirPath!"
+-            )
+-        ) else (
+-            call :PrintRed "!dirPath! does not exist"
+-        )
+-    )
+-)
+-
+-endlocal
+-exit /b
+ 
+ :PrintGreen
+ powershell -NoProfile -Command "Write-Host \"%~1\" -ForegroundColor Green"
+@@ -1306,6 +1043,24 @@
+ if "%extracted%"=="0" (
+     echo Zapret must be extracted from archive first or bin folder not found for some reason
+     pause
+-    exit
++    exit /b 1
+ )
+ exit /b 0
++
++
++:: REVIEWED SUPPORT: explicit paths and environment data, never interpolated PowerShell code
++:reviewed_preflight
++call :reviewed_support Preflight
++exit /b %errorlevel%
++
++:reviewed_check_files
++call :reviewed_support Validate
++exit /b %errorlevel%
++
++:reviewed_support
++setlocal DisableDelayedExpansion
++set "ZAPRET_REVIEW_ROOT=%~dp0"
++set "ZAPRET_REVIEW_MODE=%~1"
++"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -Command "$ErrorActionPreference='Stop';try{$p=Join-Path $env:ZAPRET_REVIEW_ROOT 'utils/reviewed-support.ps1';$s=[scriptblock]::Create([IO.File]::ReadAllText($p));& $s -Root $env:ZAPRET_REVIEW_ROOT -Mode $env:ZAPRET_REVIEW_MODE}catch{Write-Host 'Reviewed support failed to load. Extract the full archive again.' -ForegroundColor Red;exit 1}"
++set "reviewed_result=%errorlevel%"
++endlocal & exit /b %reviewed_result%
+--- a/utils/test zapret.ps1
++++ b/utils/test zapret.ps1
+@@ -1,3 +1,6 @@
++Write-Host 'Legacy strategy test runner is disabled: it stops unrelated processes and temporarily enables IPSet ANY. Run CHECK.cmd for read-only file checks.' -ForegroundColor Yellow
++exit 1
++
+ $hasErrors = $false
+ 
+ $rootDir = Split-Path $PSScriptRoot
+--- /dev/null
++++ b/START.cmd
+@@ -0,0 +1,5 @@
++@echo off
++setlocal DisableDelayedExpansion
++set "ZAPRET_REWORK_ROOT=%~dp0"
++"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -Command "$ErrorActionPreference='Stop';try{Start-Process -FilePath (Join-Path $env:ZAPRET_REWORK_ROOT 'general.bat') -WorkingDirectory $env:ZAPRET_REWORK_ROOT -Verb RunAs}catch{Write-Host 'Launch cancelled or failed. Extract the full archive and try again.' -ForegroundColor Red;exit 1}"
++if errorlevel 1 pause
+--- /dev/null
++++ b/CHECK.cmd
+@@ -0,0 +1,7 @@
++@echo off
++setlocal DisableDelayedExpansion
++set "ZAPRET_CORE_ROOT=%~dp0"
++"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoLogo -NoProfile -Command "$ErrorActionPreference='Stop';try{$r=$env:ZAPRET_CORE_ROOT;$p=Join-Path $r 'utils/reviewed-support.ps1';if((Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash -ne 'd9a131f0bd674d3ff1f68565e6f6c9fa0c3bf9a5b00dad5ce6ce05d0df51b9ba'){throw 'Support checksum mismatch. Extract archive again.'};$s=[scriptblock]::Create([IO.File]::ReadAllText($p));& $s -Root $r -Mode Preflight -ValidateOnly}catch{Write-Host $_.Exception.Message -ForegroundColor Red;exit 1}"
++set "result=%errorlevel%"
++pause
++exit /b %result%
+--- /dev/null
++++ b/utils/reviewed-support.ps1
+@@ -0,0 +1,186 @@
++param(
++    [Parameter(Mandatory=$true)][string]$Root,
++    [ValidateSet('Preflight','Validate','UpdateIpSet','SwitchIpSet','CheckServiceOwner')]
++    [string]$Mode='Preflight',
++    [switch]$ValidateOnly
++)
++$ErrorActionPreference='Stop'
++
++function Convert-ReviewedIpSetText {
++    param([AllowNull()][AllowEmptyString()][string]$Text,[switch]$AllowSentinel)
++    if([string]::IsNullOrWhiteSpace($Text)){throw 'IPSet is empty. Empty IPSet means ANY and is refused.'}
++    if([Text.Encoding]::UTF8.GetByteCount($Text) -gt 8388608){throw 'IPSet exceeds 8 MiB.'}
++    $lines=@($Text.TrimStart([char]0xFEFF) -split '\r?\n'|ForEach-Object{$_.Trim()}|Where-Object{$_ -and -not $_.StartsWith('#')})
++    if($lines.Count -lt 1 -or $lines.Count -gt 100000){throw 'IPSet must contain 1 to 100000 networks.'}
++    function Get-ReviewedIpv4Number([byte[]]$Bytes){
++        (([uint64]$Bytes[0] -shl 24) -bor ([uint64]$Bytes[1] -shl 16) -bor ([uint64]$Bytes[2] -shl 8) -bor [uint64]$Bytes[3])
++    }
++    $blocked=@('0.0.0.0/8','10.0.0.0/8','100.64.0.0/10','127.0.0.0/8','169.254.0.0/16','172.16.0.0/12','192.0.0.0/24','192.0.2.0/24','192.88.99.0/24','192.168.0.0/16','198.18.0.0/15','198.51.100.0/24','203.0.113.0/24','224.0.0.0/4','240.0.0.0/4')|ForEach-Object{
++        $parts=$_.Split('/');$first=Get-ReviewedIpv4Number ([Net.IPAddress]::Parse($parts[0]).GetAddressBytes())
++        [pscustomobject]@{First=$first;Last=$first+[uint64][Math]::Pow(2,32-[int]$parts[1])-1}
++    }
++    function Test-ReviewedIpv6Overlap([byte[]]$A,[int]$PrefixA,[byte[]]$B,[int]$PrefixB){
++        $common=[Math]::Min($PrefixA,$PrefixB);$whole=[int][Math]::Floor($common/8);$partial=$common%8
++        for($j=0;$j -lt $whole;$j++){if($A[$j] -ne $B[$j]){return $false}}
++        if($partial -ne 0){$mask=(255 -shl (8-$partial)) -band 255;if(($A[$whole] -band $mask) -ne ($B[$whole] -band $mask)){return $false}}
++        return $true
++    }
++    $v6docs=@(
++        [pscustomobject]@{Address=[Net.IPAddress]::Parse('2001:db8::');Prefix=32},
++        [pscustomobject]@{Address=[Net.IPAddress]::Parse('3fff::');Prefix=20}
++    )
++    $result=New-Object 'Collections.Generic.List[string]'
++    $seen=New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
++    foreach($line in $lines){
++        if($AllowSentinel -and $lines.Count -eq 1 -and $line -ceq '203.0.113.113/32'){return @('203.0.113.113/32')}
++        if($line -notmatch '^([0-9a-fA-F:.]+)/([1-9][0-9]{0,2})$'){throw 'IPSet contains a malformed or catch-all network.'}
++        $textAddress=$Matches[1];$prefix=[int]$Matches[2];$ip=[Net.IPAddress]::None
++        if(-not [Net.IPAddress]::TryParse($textAddress,[ref]$ip)){throw 'IPSet contains an invalid address.'}
++        $bytes=$ip.GetAddressBytes();$v4=$ip.AddressFamily -eq [Net.Sockets.AddressFamily]::InterNetwork
++        if($v4){
++            if($prefix -gt 32 -or $textAddress -notmatch '^[0-9]{1,3}(?:\.[0-9]{1,3}){3}$' -or $textAddress -cne $ip.ToString()){throw 'IPSet IPv4 address or prefix is invalid.'}
++        }elseif($ip.AddressFamily -eq [Net.Sockets.AddressFamily]::InterNetworkV6){
++            if($prefix -gt 128 -or ($bytes[0] -band 0xE0) -ne 0x20){throw 'IPSet IPv6 network is not public global space.'}
++            foreach($range in $v6docs){if(Test-ReviewedIpv6Overlap $bytes $prefix $range.Address.GetAddressBytes() $range.Prefix){throw 'IPSet overlaps documentation IPv6 space.'}}
++        }else{throw 'Unsupported IPSet address family.'}
++        $whole=[int][Math]::Floor($prefix/8);$remainder=$prefix%8
++        for($i=$whole;$i -lt $bytes.Length;$i++){
++            $mask=if($i -eq $whole -and $remainder -ne 0){(1 -shl (8-$remainder))-1}else{255}
++            if(($bytes[$i] -band $mask) -ne 0){throw 'IPSet contains host bits; use network addresses.'}
++        }
++        $canonical=$ip.ToString().ToLowerInvariant()+'/'+$prefix
++        if($v4){
++            $first=Get-ReviewedIpv4Number $bytes;$last=$first+[uint64][Math]::Pow(2,32-$prefix)-1
++            # Exact compatibility entry in the verified official 1.10.4 IPSet catalog.
++            # The deprecated 6to4 relay /24 is not an RFC1918 private network; do not
++            # generalize this exception to its subprefixes or other reserved space.
++            $legacyRelay=$canonical -ceq '192.88.99.0/24'
++            if(-not $legacyRelay){foreach($range in $blocked){if($first -le $range.Last -and $last -ge $range.First){throw 'IPSet overlaps private, reserved or documentation IPv4 space.'}}}
++        }
++        if($seen.Add($canonical)){$null=$result.Add($canonical)}
++    }
++    $result.ToArray()
++}
++
++function Read-ReviewedIpSet([string]$Path,[switch]$AllowSentinel){
++    $file=Get-Item -LiteralPath $Path -ErrorAction Stop
++    if(-not ($file -is [IO.FileInfo]) -or $file.Length -gt 8388608){throw 'IPSet file is missing or exceeds 8 MiB.'}
++    @(Convert-ReviewedIpSetText ([IO.File]::ReadAllText($file.FullName)) -AllowSentinel:$AllowSentinel)
++}
++
++function Test-ReviewedFiles([string]$Directory){
++    $manifest=Get-Content -LiteralPath (Join-Path $Directory 'ORIGINAL-SHA256.json') -Raw -Encoding UTF8|ConvertFrom-Json
++    foreach($name in @('bin/winws.exe','bin/WinDivert.dll','bin/WinDivert64.sys','bin/cygwin1.dll')){
++        $expected=$manifest.PSObject.Properties[$name].Value
++        if($expected -notmatch '^[0-9a-fA-F]{64}$' -or (Get-FileHash -LiteralPath (Join-Path $Directory $name) -Algorithm SHA256).Hash -ne $expected){throw ('Native file checksum mismatch: '+$name)}
++    }
++    $null=@(Read-ReviewedIpSet (Join-Path $Directory 'lists/ipset-all.txt') -AllowSentinel)
++}
++
++function Test-ReviewedServiceOwner([string]$Directory){
++    $service=Get-CimInstance Win32_Service -Filter "Name='zapret'" -ErrorAction Stop
++    if($null -eq $service){return}
++    $command=[Environment]::ExpandEnvironmentVariables([string]$service.PathName).Trim()
++    if($command -match '^"([^"]+)"(?:\s|$)'){$actual=$Matches[1]}
++    elseif($command -match '^(\S+)(?:\s|$)'){$actual=$Matches[1]}
++    else{throw 'Cannot determine which folder owns the existing zapret service.'}
++    $expected=[IO.Path]::GetFullPath((Join-Path $Directory 'bin/winws.exe'))
++    if(-not [IO.Path]::GetFullPath($actual).Equals($expected,[StringComparison]::OrdinalIgnoreCase)){throw 'The existing zapret service belongs to another folder. It was not changed.'}
++}
++
++function Get-ReviewedOfficialIpSet {
++    $p=New-Object Diagnostics.Process;$started=$false
++    try{
++        $info=New-Object Diagnostics.ProcessStartInfo
++        $info.FileName=Join-Path $env:SystemRoot 'System32/curl.exe'
++        $info.Arguments='--disable --fail --silent --show-error --max-time 25 --connect-timeout 8 --max-filesize 8388608 --proto =https --proto-redir =https -- https://raw.githubusercontent.com/Flowseal/zapret-discord-youtube/refs/heads/main/.service/ipset-service.txt'
++        $info.UseShellExecute=$false;$info.CreateNoWindow=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true;$p.StartInfo=$info
++        $started=$p.Start();if(-not $started){throw 'Official IPSet download could not start.'}
++        $stdout=$p.StandardOutput.ReadToEndAsync();$stderr=$p.StandardError.ReadToEndAsync()
++        if(-not $p.WaitForExit(29000)){throw 'Official IPSet download timed out.'}
++        if(-not $stdout.Wait(3000) -or -not $stderr.Wait(3000)){throw 'Official IPSet response could not be read.'}
++        $body=$stdout.GetAwaiter().GetResult();$null=$stderr.GetAwaiter().GetResult()
++        if($p.ExitCode -ne 0){throw 'Verified HTTPS IPSet download failed; the old list was preserved.'}
++        @(Convert-ReviewedIpSetText $body)
++    }finally{
++        if($started){try{if(-not $p.HasExited){$p.Kill();$null=$p.WaitForExit(4000)}}catch{}}
++        $p.Dispose()
++    }
++}
++
++function Write-ReviewedIpSetAtomic([string]$Path,[string[]]$Networks){
++    $canonical=@(Convert-ReviewedIpSetText ($Networks -join "`n") -AllowSentinel)
++    $temporary=Join-Path (Split-Path -Parent $Path) ('.ipset-stage-'+[guid]::NewGuid().ToString('N')+'.tmp')
++    $rollback=$null;$stream=$null
++    try{
++        $bytes=[Text.Encoding]::ASCII.GetBytes(($canonical -join "`r`n")+"`r`n")
++        $stream=[IO.File]::Open($temporary,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
++        $stream.Write($bytes,0,$bytes.Length);$stream.Flush();$stream.Dispose();$stream=$null
++        if([IO.File]::Exists($Path)){
++            $rollback=$Path+'.before-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N')+'.bak'
++            [IO.File]::Replace($temporary,$Path,$rollback)
++        }else{[IO.File]::Move($temporary,$Path)}
++        return $rollback
++    }finally{
++        if($null -ne $stream){$stream.Dispose()}
++        if([IO.File]::Exists($temporary)){[IO.File]::Delete($temporary)}
++    }
++}
++
++try{
++    $Root=[IO.Path]::GetFullPath($Root)
++    if($ValidateOnly -or $Mode -eq 'Validate'){
++        Test-ReviewedFiles $Root
++        Write-Output 'REVIEWED_FILES_OK'
++        exit 0
++    }
++    if($env:OS -ne 'Windows_NT'){throw 'This action requires Windows.'}
++    if($Mode -eq 'CheckServiceOwner'){Test-ReviewedServiceOwner $Root;exit 0}
++    if($Mode -eq 'Preflight'){
++        Test-ReviewedFiles $Root
++        if($env:PROCESSOR_ARCHITECTURE -ne 'AMD64' -and $env:PROCESSOR_ARCHITEW6432 -ne 'AMD64'){throw 'This release requires Windows x64.'}
++        $principal=New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
++        if(-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'Administrator rights are required. Launch START.cmd and accept the Windows prompt.'}
++        $processes=@(Get-CimInstance Win32_Process -ErrorAction Stop|Where-Object{$_.Name -in @('winws.exe','winws2.exe','goodbyedpi.exe')})
++        $services=@(Get-Service -Name zapret,GoodbyeDPI,discordfix_zapret,winws1,winws2 -ErrorAction SilentlyContinue|Where-Object{$_.Status -ne 'Stopped'})
++        if($processes.Count -or $services.Count){throw 'Another bypass process or service is active. Close its own window or stop it yourself. Nothing was terminated.'}
++        exit 0
++    }
++    $active=Join-Path $Root 'lists/ipset-all.txt';$backup=$active+'.backup'
++    if($Mode -eq 'UpdateIpSet'){
++        Test-ReviewedFiles $Root
++        $old=@(Read-ReviewedIpSet $active -AllowSentinel)
++        $disabled=$old.Count -eq 1 -and $old[0] -eq '203.0.113.113/32'
++        $new=@(Get-ReviewedOfficialIpSet)
++        $target=if($disabled){$backup}else{$active}
++        $rollback=Write-ReviewedIpSetAtomic $target $new
++        if($disabled){Write-Host ('Validated '+$new.Count+' networks and updated only ipset-all.txt.backup. IPSet filtering remains disabled.') -ForegroundColor Green}
++        else{Write-Host ('Validated '+$new.Count+' networks and atomically updated the active IPSet.') -ForegroundColor Green}
++        if($rollback){Write-Host ('Previous file retained as '+[IO.Path]::GetFileName($rollback))}
++        exit 0
++    }
++    if($Mode -eq 'SwitchIpSet'){
++        $old=@();$invalid=$false
++        try{$old=@(Read-ReviewedIpSet $active -AllowSentinel)}catch{$invalid=$true}
++        $disabled=-not $invalid -and $old.Count -eq 1 -and $old[0] -eq '203.0.113.113/32'
++        if($disabled){
++            $new=@(Read-ReviewedIpSet $backup)
++            Write-Host ('The backup contains '+$new.Count+' networks. Enabling it can affect traffic to shared provider/CDN addresses.') -ForegroundColor Yellow
++            $answer=Read-Host 'Type LOAD to enable this IPSet (Enter cancels)'
++            if($answer -cne 'LOAD'){Write-Host 'IPSet was not changed.';exit 0}
++            $rollback=Write-ReviewedIpSetAtomic $active $new
++            Write-Host 'IPSet filtering enabled. Restart the bypass to apply it.' -ForegroundColor Green
++        }else{
++            if(-not $invalid){$null=Write-ReviewedIpSetAtomic $backup $old}
++            $rollback=Write-ReviewedIpSetAtomic $active @('203.0.113.113/32')
++            Write-Host 'IPSet filtering disabled using the documentation-only sentinel. No ANY mode was created.' -ForegroundColor Green
++        }
++        if($rollback){Write-Host ('Previous active file retained as '+[IO.Path]::GetFileName($rollback))}
++        exit 0
++    }
++}catch{
++    $message=$_.Exception.Message.Replace($Root,'[folder]')
++    if($env:USERPROFILE){$message=$message.Replace($env:USERPROFILE,'[profile]')}
++    Write-Host $message -ForegroundColor Red
++    exit 1
++}
+--- /dev/null
++++ b/lists/list-youtube.txt
+@@ -0,0 +1,17 @@
++youtube.com
++youtu.be
++youtube-nocookie.com
++youtubekids.com
++googlevideo.com
++ytimg.com
++ytimg.l.google.com
++yt3.ggpht.com
++yt4.ggpht.com
++yt3.googleusercontent.com
++youtubei.googleapis.com
++youtube.googleapis.com
++youtubeembeddedplayer.googleapis.com
++jnn-pa.googleapis.com
++wide-youtube.l.google.com
++youtube-ui.l.google.com
++yt-video-upload.l.google.com
+--- /dev/null
++++ b/lists/list-openai.txt
+@@ -0,0 +1,5 @@
++chatgpt.com
++openai.com
++oaistatic.com
++oaiusercontent.com
++challenges.cloudflare.com
+--- /dev/null
++++ b/lists/list-telegram.txt
+@@ -0,0 +1,4 @@
++telegram.org
++t.me
++telegram.me
++telegram-cdn.org
+--- /dev/null
++++ b/lists/list-general-user.txt
+@@ -0,0 +1,2 @@
++# Add extra service domains below.
++domain.example.abc
+--- /dev/null
++++ b/lists/list-exclude-user.txt
+@@ -0,0 +1,2 @@
++# Add your own domain exclusions below.
++domain.example.abc
+--- /dev/null
++++ b/lists/ipset-exclude-user.txt
+@@ -0,0 +1 @@
++203.0.113.113/32

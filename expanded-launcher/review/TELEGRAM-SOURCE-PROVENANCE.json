@@ -1,0 +1,91 @@
+{
+  "official_cidr_attempt": {
+    "url": "https://core.telegram.org/resources/cidr.txt",
+    "result": "Blocked by egress proxy: CONNECT HTTP403; no official CIDR file retrieved"
+  },
+  "fallback_source": {
+    "repository": "https://github.com/telegramdesktop/tdesktop",
+    "ref": "dev",
+    "commit": "a7f453612f4896ac04d0007a36ab0d377e5bcbcf",
+    "path": "Telegram/SourceFiles/mtproto/mtproto_dc_options.cpp",
+    "sha256": "64a50e0e1650c9313f36eefb16df245085f35718bbd84faa0d99ef9192b43111"
+  },
+  "scope": "Only production built-in bootstrap endpoints, six IPv4 /32 and five IPv6 /128, all TCP443; not an official full Telegram CIDR list and not proof of current user active DC endpoints. Test DCs excluded. Dynamic endpoint updates/media/CDN may differ.",
+  "endpoints": [
+    {
+      "dc": 1,
+      "ip": "149.154.175.50",
+      "port": 443,
+      "network": "149.154.175.50/32"
+    },
+    {
+      "dc": 2,
+      "ip": "149.154.167.51",
+      "port": 443,
+      "network": "149.154.167.51/32"
+    },
+    {
+      "dc": 2,
+      "ip": "95.161.76.100",
+      "port": 443,
+      "network": "95.161.76.100/32"
+    },
+    {
+      "dc": 3,
+      "ip": "149.154.175.100",
+      "port": 443,
+      "network": "149.154.175.100/32"
+    },
+    {
+      "dc": 4,
+      "ip": "149.154.167.91",
+      "port": 443,
+      "network": "149.154.167.91/32"
+    },
+    {
+      "dc": 5,
+      "ip": "149.154.171.5",
+      "port": 443,
+      "network": "149.154.171.5/32"
+    },
+    {
+      "dc": 1,
+      "ip": "2001:b28:f23d:f001::a",
+      "port": 443,
+      "network": "2001:b28:f23d:f001::a/128"
+    },
+    {
+      "dc": 2,
+      "ip": "2001:67c:4e8:f002::a",
+      "port": 443,
+      "network": "2001:67c:4e8:f002::a/128"
+    },
+    {
+      "dc": 3,
+      "ip": "2001:b28:f23d:f003::a",
+      "port": 443,
+      "network": "2001:b28:f23d:f003::a/128"
+    },
+    {
+      "dc": 4,
+      "ip": "2001:67c:4e8:f004::a",
+      "port": 443,
+      "network": "2001:67c:4e8:f004::a/128"
+    },
+    {
+      "dc": 5,
+      "ip": "2001:b28:f23f:f005::a",
+      "port": 443,
+      "network": "2001:b28:f23f:f005::a/128"
+    }
+  ],
+  "tg_ws_proxy_reference": {
+    "repository": "https://github.com/Flowseal/tg-ws-proxy",
+    "commit": "307a384ab7f522e34bb1a045884d0bd90f40bee5",
+    "docs": [
+      "docs/README.md",
+      "docs/RU/README.windows.md"
+    ],
+    "note": "Reviewed but rejected for this bundle: inspected fallback branches weaken TLS hostname verification. Not installed, executed or included."
+  }
+}

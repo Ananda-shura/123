@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://github.com/Happ-proxy/routing_generator/blob/0554bc023cf560f152417255ba68cbdccbd9f7c0/README.md",
+    "sha256": "9bde00d162f06ba17ba5f7aa983467e3748c74a297112a33d9d94855c9365e1f"
+  },
+  {
+    "url": "https://github.com/Happ-proxy/routing_generator/blob/0554bc023cf560f152417255ba68cbdccbd9f7c0/index.php",
+    "sha256": "3152bc7f00ddac32b6cc011303a4dcb4fc6c79b8ee1fced34cbfffa496da98ce"
+  },
+  {
+    "url": "https://github.com/Happ-proxy/routing_generator/blob/0554bc023cf560f152417255ba68cbdccbd9f7c0/lang.ru.php",
+    "sha256": "d8922012634e3e6f807b4fbedc5739092dd6c6623182866b22c2a82aa8045ae2"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/Happ-proxy/Xray-docs-next/733d8c1c03528f244232f6beb872dfd763f510cf/docs/ru/config/routing.md",
+    "sha256": "198d82ce817b7a76d6c0cb97fabfd52837c1979e0dff6c2e1692b8edecc4d127"
+  }
+]

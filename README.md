@@ -1,13 +1,16 @@
 # Zapret 1.10.4: доработанные исходные файлы релиза
 
-**[Скачать готовую полную папку — ZIP, около 13 МБ](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-reworked.zip)**
+**Рекомендация скачивания отозвана. Не запускайте `zapret-1.10.4-reworked.zip` и его содержимое до выяснения причины обнаружения.**
+
+Windows Security на компьютере пользователя обнаружила `Trojan:Script/Wacatac.B!ml` и удалила скачанный ZIP. На предоставленном экране указан контейнер ZIP, внутренний файл не установлен. Срабатывание не объявлено ложным. Не отключайте защиту и не добавляйте исключения ради запуска.
+
+Контрольная сумма опубликованного ZIP: `2b2940f56218f8e3f02fdd8a463ba8265881d4c542fcd3f62dc214f68dba07d3`. Проверка ZIP и его файлов совпала с подготовленной сборкой; она подтверждает целостность, а не отсутствие вредоносного кода. Проверки Microsoft Defender в облачной Linux-среде нет.
+
+Архив и исходники сохранены для разбора. Загрузка новой версии и замена архива ради обхода обнаружения не предлагаются. [Запись об обнаружении](reworked-original/review/DEFENDER-DETECTION.md).
+
+## Техническое описание приостановленной сборки
 
 Неофициальная модификация [официального релиза Flowseal 1.10.4](https://github.com/Flowseal/zapret-discord-youtube/releases/tag/1.10.4). Официальный архив скачан повторно и совпал со всеми 59 файлами пользовательской копии. Изменены сами 22 стратегии `general*.bat`, `service.bat` и защитный вход старого тестировщика — **24 исходных текстовых файла**. Все **27 файлов bin** сохранены без изменений.
-
-1. Закройте старое окно START.cmd. Прежние папки сохраните.
-2. Распакуйте **весь** архив в **C:\Zapret**. Нужен короткий путь: у команд BAT есть ограничение CMD в 8191 символ.
-3. Откройте `Zapret-1.10.4-reworked`, нажмите **START.cmd** и подтвердите запрос Windows.
-4. Оставьте окно открытым, перезапустите браузер и проверьте YouTube, нужные сайты, Steam и игры. Для остановки закройте окно или нажмите Ctrl+C.
 
 ## Что исправлено
 
@@ -30,9 +33,6 @@
 
 ## Предыдущие варианты
 
-- [Happ + YouTube-only Zapret](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-happ-ready.zip): отдельный выборочный профиль Happ для ChatGPT/Telegram через уже работающий сервер. [Инструкция](happ-launcher/СНАЧАЛА-ПРОЧИТАЙ.txt), [проверки](happ-launcher/review/HAPP-VALIDATION.md). Новый выборочный импорт требует проверки на Windows.
-- [Предыдущий подтверждённый подбор YouTube](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-auto-test.zip), [исходник](auto-launcher/autopick.ps1), [проверки](auto-launcher/AUTO-VALIDATION.md).
-- [Расширенный вариант только с DPI-правилами](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-expanded.zip): подтверждены YouTube и Telegram Web, регион ChatGPT/Telegram Desktop этим способом не устранены.
-- [Первая полная папка](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-ready-full.zip), [дополнение без бинарников](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/zapret-1.10.4-optimized.zip), [диагностика DNS/HTTPS](https://github.com/Ananda-shura/123/raw/refs/heads/zapret-audit-1.10.4/youtube-diagnostic.zip).
+Предыдущие архивы сохранены в репозитории и используют общие компоненты. Они не предлагаются как способ обойти обнаружение. Их антивирусная безопасность здесь не подтверждена.
 
 [Первоначальный аудит релиза](zapret-files/AUDIT.md), [таблица исходных стратегий](zapret-files/STRATEGIES.md), [происхождение оригиналов](zapret-files/PROVENANCE.md).
